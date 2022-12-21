@@ -4,7 +4,7 @@ local install_path = vim.fn.stdpath 'data' .. '/site/pack/packer/start/packer.nv
 local is_bootstrap = false
 if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
   is_bootstrap = true
-  vim.fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
+  vim.fn.system { 'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path }
   vim.cmd [[packadd packer.nvim]]
 end
 
@@ -23,6 +23,9 @@ require('packer').startup(function(use)
 
       -- Useful status updates for LSP
       'j-hui/fidget.nvim',
+
+      -- Additional lua configuration, makes nvim stuff amazing
+      'folke/neodev.nvim',
     },
   }
 
@@ -118,7 +121,6 @@ vim.wo.signcolumn = 'yes'
 vim.o.termguicolors = true             -- Set colorscheme
 vim.cmd[[colorscheme nord]]
 vim.g.nord_borders = true
-vim.g.nord_disable_background = true
 require('nord').set()
 
 -- SETTING BASIC KEYMAPS --
@@ -148,7 +150,7 @@ vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
- 
+
 -- HIGHLIGHT ON YANK --
 -- See `:help vim.highlight.on_yank()`
 
@@ -182,7 +184,7 @@ autosave.setup({
   enabled = true, -- start auto-save when the plugin is loaded (i.e. when your package manager loads it)
   execution_message = {
 	  message = function() -- message to print on save
-		  return ("AutoSave: saved at " .. vim.fn.strftime("%H:%M:%S"))
+		  return ("AutoSaved at " .. vim.fn.strftime("%H:%M:%S"))
 	  end,
 	  dim = 0.18, -- dim the color of `message`
 	  cleaning_interval = 1250, -- (milliseconds) automatically clean MsgArea after displaying `message`. See :h MsgArea
@@ -369,71 +371,56 @@ local on_attach = function(_, bufnr)
 
   -- Create a command `:Format` local to the LSP buffer
   vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
-    if vim.lsp.buf.format then
-      vim.lsp.buf.format()
-    elseif vim.lsp.buf.formatting then
-      vim.lsp.buf.formatting()
-    end
+    vim.lsp.buf.format()
   end, { desc = 'Format current buffer with LSP' })
 end
 
--- SETUP MASON SO IT CAN MANAGE EXTERNAL TOOLING --
-require('mason').setup()
+-- ENABLE LANGUAGE SERVERS --
 
--- ENABLE THE FOLLOWING LANGUAGE SERVERS --
--- Feel free to add/remove any LSPs that you want here. They will automatically be installed
+--  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
+--  Add any additional override configuration in the following tables. They will be passed to
+--  the `settings` field of the server config. You must look up that documentation yourself.
+local servers = {
+  pyright = {},
 
-local servers = {'pyright', 'tsserver', 'sumneko_lua', 'gopls' }
-
--- Ensure the servers above are installed
-require('mason-lspconfig').setup {
-  ensure_installed = servers,
-}
-
--- nvim-cmp supports additional completion capabilities
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
-
-for _, lsp in ipairs(servers) do
-  require('lspconfig')[lsp].setup {
-    on_attach = on_attach,
-    capabilities = capabilities,
-  }
-end
-
--- TURN ON LSP STATUS INFORMATION --
-require('fidget').setup()
-
--- EXAMPLE CUSTOM CONFIGURATION FOR LUA --
---
--- Make runtime files discoverable to the server
-local runtime_path = vim.split(package.path, ';')
-table.insert(runtime_path, 'lua/?.lua')
-table.insert(runtime_path, 'lua/?/init.lua')
-
-require('lspconfig').sumneko_lua.setup {
-  on_attach = on_attach,
-  capabilities = capabilities,
-  settings = {
+  sumneko_lua = {
     Lua = {
-      runtime = {
-        -- Tell the language server which version of Lua you're using (most likely LuaJIT)
-        version = 'LuaJIT',
-        -- Setup your lua path
-        path = runtime_path,
-      },
-      diagnostics = {
-        globals = { 'vim' },
-      },
-      workspace = {
-        library = vim.api.nvim_get_runtime_file('', true),
-        checkThirdParty = false,
-      },
-      -- Do not send telemetry data containing a randomized but unique identifier
+      workspace = { checkThirdParty = false },
       telemetry = { enable = false },
     },
   },
 }
+
+-- SETUP NEOVIM LUA CONFIGURATION --
+require('neodev').setup()
+
+-- NVIM-CMP SUPPORTS ADDITIONAL COMPLETION CAPABILITIES --
+local capabilities = require('cmp_nvim_lsp').default_capabilities(
+  vim.lsp.protocol.make_client_capabilities()
+)
+
+-- Setup mason --
+require('mason').setup()
+
+-- Ensure the servers above are installed
+local mason_lspconfig = require 'mason-lspconfig'
+
+mason_lspconfig.setup {
+  ensure_installed = vim.tbl_keys(servers),
+}
+
+mason_lspconfig.setup_handlers {
+  function(server_name)
+    require('lspconfig')[server_name].setup {
+      capabilities = capabilities,
+      on_attach = on_attach,
+      settings = servers[server_name],
+    }
+  end,
+}
+
+-- TURN ON LSP STATUS INFORMATION --
+require('fidget').setup()
 
 -- NVIM-CMP SETUP --
 local cmp = require 'cmp'
