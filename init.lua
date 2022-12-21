@@ -107,6 +107,7 @@ vim.o.mouse = 'a'                      -- Enable mouse mode
 vim.o.breakindent = true               -- Enable break indent
 vim.o.completeopt = 'menuone,noselect' -- Set completeopt to have a better completion experience
 vim.o.undofile = true                  -- Save undo history
+vim.o.swapfile = true                -- Disable swap files
 
 vim.o.ignorecase = true                -- Case insensitive searching UNLESS /C or capital in search
 vim.o.smartcase = true
