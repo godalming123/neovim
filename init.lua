@@ -119,7 +119,6 @@ vim.o.updatetime = 250 -- Decrease update time
 vim.wo.signcolumn = 'yes'
 
 vim.o.termguicolors = true -- Set colorscheme
-vim.cmd [[colorscheme nord]]
 vim.g.nord_borders = true
 require('nord').set()
 
@@ -154,12 +153,12 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 -- HIGHLIGHT ON YANK --
 -- See `:help vim.highlight.on_yank()`
 
-local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
 vim.api.nvim_create_autocmd('TextYankPost', {
 	callback = function()
 		vim.highlight.on_yank()
 	end,
-	group = highlight_group,
+	group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
+,
 	pattern = '*',
 })
 
