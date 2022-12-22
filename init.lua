@@ -58,6 +58,7 @@ require('packer').startup(function(use)
 	use 'numToStr/Comment.nvim' -- "gc" to comment visual regions/lines
 	use 'tpope/vim-sleuth' -- Detect tabstop and shiftwidth automatically
 	use 'Pocco81/auto-save.nvim' -- Autosave
+	use 'ixru/nvim-markdown' -- Some basic markdown feautures
 
 	-- Fuzzy Finder (files, lsp, etc)
 	use { 'nvim-telescope/telescope.nvim', branch = '0.1.x', requires = { 'nvim-lua/plenary.nvim' } }
@@ -136,8 +137,8 @@ vim.g.maplocalleader = ' '
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 
 -- Move selected up/down with captil K/J in visual mode
-vim.keymap.set("v", "J", ":m'>+1<CR>gv=gv")
-vim.keymap.set("v", "K", ":m'<-2<CR>gv=gv")
+vim.keymap.set({"v", "n"}, "J", ":m'>+1<CR>gv=gv")
+vim.keymap.set({"v", "n"}, "K", ":m'<-2<CR>gv=gv")
 
 -- Move between panes to left/bottom/top/right
 vim.keymap.set("n", "<C-h>", "<C-w>h", {})
@@ -152,8 +153,6 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 -- For diagnostics
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 
 -- HIGHLIGHT ON YANK --
 -- See `:help vim.highlight.on_yank()`
@@ -162,8 +161,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 	callback = function()
 		vim.highlight.on_yank()
 	end,
-	group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
-,
+	group = vim.api.nvim_create_augroup('YankHighlight', { clear = true }),
 	pattern = '*',
 })
 
@@ -173,9 +171,17 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 require('lualine').setup {
 	options = {
 		icons_enabled = false,
-		theme = 'onedark',
-		component_separators = '|',
+		theme = 'auto',
+		component_separators = '·',
 		section_separators = '',
+	},
+	sections = {
+		lualine_a = { 'mode' },
+		lualine_b = { 'branch', 'diff' },
+		lualine_c = { 'filename' },
+		lualine_x = { 'diagnostics', 'filetype' },
+		lualine_y = { 'progress' },
+		lualine_z = { 'location' }
 	},
 }
 
@@ -201,7 +207,7 @@ autosave.setup({
 		local utils = require("auto-save.utils.data")
 
 		if fn.getbufvar(buf, "&modifiable") == 1 and
-				utils.not_in(fn.getbufvar(buf, "&filetype"), {}) then
+		    utils.not_in(fn.getbufvar(buf, "&filetype"), {}) then
 			return true -- met condition(s), can save
 		end
 		return false -- can't save
@@ -312,21 +318,21 @@ require('nvim-treesitter.configs').setup {
 			enable = true,
 			set_jumps = true, -- whether to set jumps in the jumplist
 			goto_next_start = {
-				[']]'] = '@function.outer',
+				[']f'] = '@function.outer',
 				[']c'] = '@class.outer',
 			},
 			goto_previous_start = {
-				['[['] = '@function.outer',
+				['[f'] = '@function.outer',
 				['[c'] = '@class.outer',
 			},
 		},
 		swap = {
 			enable = true,
-			swap_next = {
-				['<leader>a'] = '@parameter.inner',
-			},
 			swap_previous = {
-				['<leader>A'] = '@parameter.inner',
+				['mu'] = '@parameter.inner',
+			},
+			swap_next = {
+				['md'] = '@parameter.inner',
 			},
 		},
 	},
