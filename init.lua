@@ -105,7 +105,8 @@ vim.api.nvim_create_autocmd('BufWritePost', {
 
 vim.cmd("set clipboard+=unnamedplus") -- Use os clipboard
 vim.o.hlsearch = false -- Set highlight on search
-vim.wo.number = true -- Make line numbers default
+vim.o.number = true -- Add line numbers
+vim.o.relativenumber = true -- Make line numbers relative
 vim.o.mouse = 'a' -- Enable mouse mode
 vim.o.breakindent = true -- Enable break indent
 vim.o.completeopt = 'menuone,noselect' -- Set completeopt to have a better completion experience
@@ -133,6 +134,10 @@ vim.g.maplocalleader = ' '
 
 -- Keymaps for better default experience
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
+
+-- Move selected up/down with captil K/J in visual mode
+vim.keymap.set("v", "J", ":m'>+1<CR>gv=gv")
+vim.keymap.set("v", "K", ":m'<-2<CR>gv=gv")
 
 -- Move between panes to left/bottom/top/right
 vim.keymap.set("n", "<C-h>", "<C-w>h", {})
@@ -269,7 +274,6 @@ vim.keymap.set('n', 'ff', require('telescope.builtin').find_files, { desc = '[F]
 vim.keymap.set('n', 'fh', require('telescope.builtin').help_tags, { desc = '[F]ind [H]elp' })
 vim.keymap.set('n', 'fd', require('telescope.builtin').diagnostics, { desc = '[F]ind [D]iagnostics' })
 vim.keymap.set('n', 'fr', require('telescope.builtin').oldfiles, { desc = '[F]ind [R]ecent' })
-vim.keymap.set('n', 'fb', require('telescope.builtin').buffers, { desc = '[F]ind [B]uffers' })
 vim.keymap.set('n', 'fk', require('telescope.builtin').keymaps, { desc = '[F]ind [K]eymaps' })
 
 -- CONFIGURE TREESITTER --
