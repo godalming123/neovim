@@ -242,7 +242,7 @@ require('gitsigns').setup {
 	signs = {
 		add = { text = '+' },
 		change = { text = '~' },
-		delete = { text = '_' },
+		delete = { text = '-' },
 		topdelete = { text = '‾' },
 		changedelete = { text = '~' },
 	},
@@ -294,10 +294,8 @@ require('nvim-treesitter.configs').setup {
 	incremental_selection = {
 		enable = true,
 		keymaps = {
-			init_selection = '<c-space>',
-			node_incremental = '<c-space>',
-			scope_incremental = '<c-s>',
-			node_decremental = '<c-backspace>',
+			init_selection = 't', -- Select the variable/brackets/curly braces/square braces/string you are currently inside
+			node_incremental = 't', -- Increase your selection by selcting the parent variable/brackets/curly braces...
 		},
 	},
 	textobjects = {
