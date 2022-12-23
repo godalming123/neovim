@@ -57,6 +57,8 @@ require('packer').startup(function(use)
 	use 'lukas-reineke/indent-blankline.nvim' -- Add indentation guides even on blank lines
 	use 'numToStr/Comment.nvim' -- "gc" to comment visual regions/lines
 	use 'tpope/vim-sleuth' -- Detect tabstop and shiftwidth automatically
+
+	-- Plugins for me personally
 	use 'Pocco81/auto-save.nvim' -- Autosave
 	use 'ixru/nvim-markdown' -- Some basic markdown feautures
 
@@ -137,8 +139,8 @@ vim.g.maplocalleader = ' '
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 
 -- Move selected up/down with captil K/J in visual mode
-vim.keymap.set({"v", "n"}, "J", ":m'>+1<CR>gv=gv")
-vim.keymap.set({"v", "n"}, "K", ":m'<-2<CR>gv=gv")
+vim.keymap.set({ "v", "n" }, "J", ":m'>+1<CR>gv=gv")
+vim.keymap.set({ "v", "n" }, "K", ":m'<-2<CR>gv=gv")
 
 -- Move between panes to left/bottom/top/right
 vim.keymap.set("n", "<C-h>", "<C-w>h", {})
