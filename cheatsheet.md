@@ -27,11 +27,17 @@ As for editing and navigating text, there are several syntaxes to do this:
               For example, `diw` deletes the word no matter where you are inside it rathor then deleting to the end of the word.
          - **h/j/k/l** move left/down/up/right
          - **w**       move to the start of the next word
+         - **b**       move to the start of the previous word
          - **e**       move to the end of the next word
+         - **ge**      move backwords to the end of a word
          - **$**       go to end of line
+         - **0**       go to very start of line
+         - **^**       go to the begining of code on line (first non-empty charecter)
          - **H/M/L**   go to top/middle/bottom of screen
          - **G**       go to end of file
          - **gg**      go to start of file
+         - **}**       jump to next paragraph (or function/block, when editing code) 
+         - **{**       jump to previous paragraph (or function/block, when editing code) 
  - **Instructions:**
         Instructions are like commands but already come with a motion attached. EG: x(instruction) = d(command)l(motion)
          - **~**        change case of letter under cursor and move cursor forwards
@@ -42,23 +48,38 @@ As for editing and navigating text, there are several syntaxes to do this:
          - **o**        enter newline below and start inserting
          - **O**        enter newline above and start inserting
          - **p**        pastes text from the neovim clipboard
-         - r        replace currently selected letter
-         - **0**        move to start of line
+         - **r**        replace currently selected letter
+         - **zz**       scroll so cursor is centred on screen
+         - **zt**       scroll so cursor is on top of screen
+         - **zb**       scroll so cursor is on bottom of screen
+         - **i**        insert at cursor
+         - **I**        insert at begining of line
+         - **a**        append at cursor
+         - **A**        append at end of line
+         - **J**        join line below to current one with one space in-between
+         - **S**        delete line and substitute text (like cc)
+         - **.**    repeat last command
          - **t**        ***!SPECIFIC*** select the variable/string/brackets/curly braces/square brackets your cursor is in
 
 ## Insert - i
  - The primary mode for typing text.
  - Just type use normal keys such as the arrow keys to move and then press **ESC** when you are done.
+- **Ctrl + t** indent one line in insert mode
+- **Ctrl + d** de-indent one line in insert mode
 
 ## Visual - v
  - The mode used to selected text.
  - Use *MOTIONS* to expand/contract your selection
  - Use *COMMANDS/INSTRUCTIONS* to perform operations on your selection
+ - Use **o** to switch which end of your selection you are expanding/contracting
  - Their are also other operations that can be performed such as:
          - **U** converts selection to uppercase
          - **u** converts selection to lowercase
          - **J** ***!SPECIFIC*** Move selection down
          - **K** ***!SPECIFIC*** Move selection up
+
+## Visual line - capital V
+         - Like visual but select whole lines rathor then charecters
 
 ## Visual block - ctrl + v
  - Like visual but selects text in a block
@@ -85,7 +106,8 @@ As for editing and navigating text, there are several syntaxes to do this:
  - **String:**
          - The string you would like to replace the text with
  - **Flags:**
-         - **g** find and replace entire file
+         - **g**  replace all mathches
+         - **gc** replace all mathes with confirmations
  - **Example:**
          - :%s/\(.\)noremap(/vim.keymap.set("\1
 
